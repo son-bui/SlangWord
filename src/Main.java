@@ -6,6 +6,7 @@ import java.io.IOException;
 public class Main {
     private static Map<String, String> slangWords;
     private static List<String> searchHistory;
+
     public static void main(String[] args) {
         initializeSlangDictionary();
 
@@ -30,6 +31,9 @@ public class Main {
                 case 4:
                     addonSlangWord(scanner);
                     break;
+                case 5:
+                    editSlangWord(scanner);
+                    break;
                 case 8:
                     displayRandomSlangWord();
                     break;
@@ -50,7 +54,8 @@ public class Main {
         System.out.println("1. Tìm kiếm theo slang word");
         System.out.println("2. Tìm kiếm theo definition");
         System.out.println("3. Hiển thị lịch sử tìm kiếm");
-        System.out.println("3. Thêm mới slang word");
+        System.out.println("4. Thêm mới slang word");
+        System.out.println("5. Chỉnh sửa slang word");
         System.out.println("8. Random slang word");
         System.out.println("0. Thoát");
         System.out.print("Nhập lựa chọn của bạn: ");
@@ -139,7 +144,7 @@ public class Main {
             System.out.print("Slang word đã tồn tại. Bạn có muốn ghi đè (overwrite) hay tạo slang word mới (duplicate)? (o/d): ");
             String choose = scanner.nextLine();
 
-            if(choose.equalsIgnoreCase("o")) {
+            if (choose.equalsIgnoreCase("o")) {
                 System.out.print("Nhập definition mới cho slang word \"" + slangWord + "\": ");
                 String newDefinition = scanner.nextLine();
                 slangWords.put(slangWord, newDefinition);
@@ -160,6 +165,20 @@ public class Main {
         String definition = scanner.nextLine();
         slangWords.put(slangWord, definition);
         System.out.println("Slang word mới đã được thêm thành công!");
+    }
+
+    private static void editSlangWord(Scanner scanner) {
+        System.out.print("Nhập slang word cần chỉnh sửa: ");
+        String slangWord = scanner.nextLine();
+
+        if (slangWords.containsKey(slangWord)) {
+            System.out.print("Nhập definition mới cho slang word \"" + slangWord + "\": ");
+            String newDefinition = scanner.nextLine();
+            slangWords.put(slangWord, newDefinition);
+            System.out.println("Slang word đã được chỉnh sửa thành công.");
+        } else {
+            System.out.println("Không tìm thấy slang word này trong từ điển.");
+        }
     }
 
     private static void displayRandomSlangWord() {
