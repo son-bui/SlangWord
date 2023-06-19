@@ -8,7 +8,7 @@ public class Main {
     private static List<String> searchHistory;
 
     public static void main(String[] args) {
-        initializeSlangDictionary();
+        initSlangWord();
 
         Scanner scanner = new Scanner(System.in);
         int choose = 0;
@@ -34,6 +34,12 @@ public class Main {
                 case 5:
                     editSlangWord(scanner);
                     break;
+                case 6:
+                    deleteSlangWord(scanner);
+                    break;
+                case 7:
+                    resetSlangWords(scanner);
+                    break;
                 case 8:
                     displayRandomSlangWord();
                     break;
@@ -56,12 +62,14 @@ public class Main {
         System.out.println("3. Hiển thị lịch sử tìm kiếm");
         System.out.println("4. Thêm mới slang word");
         System.out.println("5. Chỉnh sửa slang word");
+        System.out.println("6. Xóa slang word");
+        System.out.println("7. Reset danh sách slang word");
         System.out.println("8. Random slang word");
         System.out.println("0. Thoát");
         System.out.print("Nhập lựa chọn của bạn: ");
     }
 
-    private static void initializeSlangDictionary() {
+    private static void initSlangWord() {
         slangWords = new HashMap<>();
         searchHistory = new ArrayList<>();
 
@@ -178,6 +186,41 @@ public class Main {
             System.out.println("Slang word đã được chỉnh sửa thành công.");
         } else {
             System.out.println("Không tìm thấy slang word này trong từ điển.");
+        }
+    }
+
+    private static void deleteSlangWord(Scanner scanner) {
+        System.out.print("Nhập slang word cần xóa: ");
+        String slangWord = scanner.nextLine();
+
+        if (slangWords.containsKey(slangWord)) {
+            System.out.print("Bạn có chắc chắn muốn xóa slang word \""+slangWord+"\" không? (y/n): ");
+            String choose = scanner.nextLine();
+
+            if (choose.equalsIgnoreCase("y") || choose.equalsIgnoreCase("Y") || choose.equalsIgnoreCase("yes")) {
+                slangWords.remove(slangWord);
+                System.out.println("Slang word đã được xóa thành công!");
+            } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("N") || choose.equalsIgnoreCase("no")) {
+                System.out.println("Không xóa slang word.");
+            } else {
+                System.out.println("Lựa chọn của bạn không hợp lệ. Vui lòng thử lại sau!");
+            }
+        } else {
+            System.out.println("Rất tiếc. Không tìm thấy slang word này trong từ điển. Vui lòng thử lại sau!");
+        }
+    }
+
+    private static void resetSlangWords(Scanner scanner) {
+        initSlangWord();
+        System.out.print("Bạn có chắc chắn muốn reset không? (y/n): ");
+        String choose = scanner.nextLine();
+
+        if (choose.equalsIgnoreCase("y") || choose.equalsIgnoreCase("Y") || choose.equalsIgnoreCase("yes")) {
+            System.out.println("Đã reset danh sách slang words thành công!");
+        } else if (choose.equalsIgnoreCase("n") || choose.equalsIgnoreCase("N") || choose.equalsIgnoreCase("no")) {
+            System.out.println("Không reset slang word.");
+        } else {
+            System.out.println("Lựa chọn của bạn không hợp lệ. Vui lòng thử lại sau!");
         }
     }
 
