@@ -41,10 +41,16 @@ public class Main {
                     resetSlangWords(scanner);
                     break;
                 case 8:
-                    displayRandomSlangWord();
+                    randomSlangWord();
+                    break;
+                case 9:
+                    quizSlangWord(scanner);
+                    break;
+                case 10:
+                    quizDefinition(scanner);
                     break;
                 case 0:
-                    System.out.println("Cảm ơn bạn đã sử dụng ứng dụng Slang Dictionary. Hẹn gặp lại!");
+                    System.out.println("Bạn đã tắt ứng dụng. Hẹn gặp lại!");
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
@@ -65,6 +71,8 @@ public class Main {
         System.out.println("6. Xóa slang word");
         System.out.println("7. Reset danh sách slang word");
         System.out.println("8. Random slang word");
+        System.out.println("9. Đố vui slang word");
+        System.out.println("10. Đố vui definition");
         System.out.println("0. Thoát");
         System.out.print("Nhập lựa chọn của bạn: ");
     }
@@ -194,7 +202,7 @@ public class Main {
         String slangWord = scanner.nextLine();
 
         if (slangWords.containsKey(slangWord)) {
-            System.out.print("Bạn có chắc chắn muốn xóa slang word \""+slangWord+"\" không? (y/n): ");
+            System.out.print("Bạn có chắc chắn muốn xóa slang word \"" + slangWord + "\" không? (y/n): ");
             String choose = scanner.nextLine();
 
             if (choose.equalsIgnoreCase("y") || choose.equalsIgnoreCase("Y") || choose.equalsIgnoreCase("yes")) {
@@ -224,7 +232,7 @@ public class Main {
         }
     }
 
-    private static void displayRandomSlangWord() {
+    private static void randomSlangWord() {
         List<String> slangWordList = new ArrayList<>(slangWords.keySet());
         System.out.println(slangWordList);
         Random random = new Random();
@@ -233,5 +241,113 @@ public class Main {
 
         System.out.println("Slang word ngẫu nhiên: " + randomSlangWord);
         System.out.println("Definition: " + slangWords.get(randomSlangWord));
+    }
+
+    private static void quizSlangWord(Scanner scanner) {
+        List<String> listSlangWord = new ArrayList<>(slangWords.keySet());
+        Random random = new Random();
+        int rIndex = random.nextInt(listSlangWord.size());
+        String quizSlangWord = listSlangWord.get(rIndex);
+        System.out.println(quizSlangWord);
+        System.out.println("Hãy chọn definition cho slang word \"" + quizSlangWord + "\": ");
+
+        List<String> options = generateQuestionOptions(quizSlangWord);
+        Collections.shuffle((options));
+
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ". " + options.get(i));
+        }
+
+        int choose = scanner.nextInt();
+
+        if (choose >= 1 && choose <= options.size()) {
+            String answer = options.get(choose - 1);
+            if (answer.equals(slangWords.get(quizSlangWord))) {
+                System.out.println("Chính xác! Bạn đã trả lời đúng.");
+            } else {
+                System.out.println("Rất tiếc. Câu trả lời chưa chính xác.");
+                System.out.println("Đáp án đúng là \"" + slangWords.get(quizSlangWord) + "\".");
+            }
+        } else {
+            System.out.println("Lựa chọn của bạn không hợp lệ");
+        }
+    }
+
+    private static List<String> generateQuestionOptions(String quizSlangWord) {
+        List<String> answerOptions = new ArrayList<>();
+        // Đáp án đúng
+        answerOptions.add(slangWords.get(quizSlangWord));
+
+        // 3 Đáp án ngẫu nhiên khác
+        List<String> listSlangWord = new ArrayList<>(slangWords.keySet());
+        listSlangWord.remove(quizSlangWord);
+
+        // Trộn ngẫu nhiên danh sách tạm thời
+        Collections.shuffle(listSlangWord);
+
+        int numOptions = Math.min(listSlangWord.size(), 3);
+        for (int i = 0; i < numOptions; i++) {
+            answerOptions.add(slangWords.get(listSlangWord.get(i)));
+        }
+
+        return answerOptions;
+    }
+
+    private static void quizDefinition(Scanner scanner) {
+        List<String> listDefinition = new ArrayList<>(slangWords.values());
+        Random random = new Random();
+        int rIndex = random.nextInt(listDefinition.size());
+        String quizDefinition = listDefinition.get(rIndex);
+        System.out.println("Chọn slang word cho definition \"" + quizDefinition + "\": ");
+        List<String> answerOptions = generateAnswerOptions(quizDefinition);
+        Collections.shuffle(answerOptions);
+
+        for (int i = 0; i < answerOptions.size(); i++) {
+            System.out.println((i + 1) + ". " + answerOptions.get(i));
+        }
+
+        int userChoice = scanner.nextInt();
+
+        if (userChoice >= 1 && userChoice <= answerOptions.size()) {
+            String userAnswer = answerOptions.get(userChoice - 1);
+            String correctSlangWord = getSlangWord(quizDefinition);
+
+            if (userAnswer.equals(correctSlangWord)) {
+                System.out.println("Chính xác! Bạn đã trả lời đúng.");
+            } else {
+                System.out.println("Sai rồi! Đáp án đúng là \"" + correctSlangWord + "\".");
+            }
+        } else {
+            System.out.println("Lựa chọn không hợp lệ.");
+        }
+    }
+
+    private static List<String> generateAnswerOptions(String quizSlangWord) {
+        List<String> answerOptions = new ArrayList<>();
+        // Đáp án đúng
+        answerOptions.add(getSlangWord(quizSlangWord));
+
+        // 3 Đáp án ngẫu nhiên khác
+        List<String> listSlangWord = new ArrayList<>(slangWords.keySet());
+        listSlangWord.remove(quizSlangWord);
+
+        // Trộn ngẫu nhiên danh sách tạm thời
+        Collections.shuffle(listSlangWord);
+
+        int numOptions = Math.min(listSlangWord.size(), 3);
+        for (int i = 0; i < numOptions; i++) {
+            answerOptions.add(slangWords.get(listSlangWord.get(i)));
+        }
+
+        return answerOptions;
+    }
+
+    private static String getSlangWord(String definition) {
+        for (Map.Entry<String, String> entry: slangWords.entrySet()) {
+            if (entry.getValue().equals(definition)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }
