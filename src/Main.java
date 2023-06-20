@@ -7,8 +7,10 @@ public class Main {
     private static Map<String, String> slangWords;
     private static List<String> searchHistory;
 
+    private static String bulkhead;
+
     public static void main(String[] args) {
-        initSlangWord();
+        initSlangWord(false);
 
         Scanner scanner = new Scanner(System.in);
         int choose = 0;
@@ -77,16 +79,27 @@ public class Main {
         System.out.print("Nhập lựa chọn của bạn: ");
     }
 
-    private static void initSlangWord() {
+    private static void initSlangWord(Boolean isReset) {
         slangWords = new HashMap<>();
         searchHistory = new ArrayList<>();
 
         String filePath = "slang.txt"; // Đường dẫn tới file
+        if (!isReset) {
+            System.out.print("Nhập kí tự phân tách (không nhập mặc định là \""+"`"+"\"): ");
+            Scanner scanner = new Scanner(System.in);
+            String temp = scanner.nextLine();
+            boolean valid = temp != null && !temp.isEmpty() && !temp.trim().isEmpty();
+            if (valid) {
+                bulkhead = temp;
+            } else {
+                bulkhead = "`";
+            }
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("`");
+                String[] parts = line.split(bulkhead);
                 if (parts.length == 2) {
                     String slang = parts[0].trim();
                     String meaning = parts[1].trim();
@@ -219,7 +232,7 @@ public class Main {
     }
 
     private static void resetSlangWords(Scanner scanner) {
-        initSlangWord();
+        initSlangWord(true);
         System.out.print("Bạn có chắc chắn muốn reset không? (y/n): ");
         String choose = scanner.nextLine();
 
@@ -234,7 +247,6 @@ public class Main {
 
     private static void randomSlangWord() {
         List<String> slangWordList = new ArrayList<>(slangWords.keySet());
-        System.out.println(slangWordList);
         Random random = new Random();
         int randomIndex = random.nextInt(slangWordList.size());
         String randomSlangWord = slangWordList.get(randomIndex);
@@ -248,7 +260,6 @@ public class Main {
         Random random = new Random();
         int rIndex = random.nextInt(listSlangWord.size());
         String quizSlangWord = listSlangWord.get(rIndex);
-        System.out.println(quizSlangWord);
         System.out.println("Hãy chọn definition cho slang word \"" + quizSlangWord + "\": ");
 
         List<String> options = generateQuestionOptions(quizSlangWord);
@@ -343,7 +354,7 @@ public class Main {
     }
 
     private static String getSlangWord(String definition) {
-        for (Map.Entry<String, String> entry: slangWords.entrySet()) {
+        for (Map.Entry<String, String> entry : slangWords.entrySet()) {
             if (entry.getValue().equals(definition)) {
                 return entry.getKey();
             }
